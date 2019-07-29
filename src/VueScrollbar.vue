@@ -28,9 +28,8 @@
   </div>
 </template>
 <script lang='ts'>
-import { _Vue as Vue } from './_vue';
 import { value, computed, onMounted, onDestroyed } from 'vue-function-api';
-export default Vue.extend({
+export default {
   props: {
     color: String,
   },
@@ -137,7 +136,7 @@ export default Vue.extend({
       onMouseScrollStart,
     };
   },
-})
+};
 type ScrollDirection = 'x' | 'y';
 </script>
 <style>
