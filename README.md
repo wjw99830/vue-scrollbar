@@ -10,4 +10,4 @@ all you need to do is
 ```
 
 # Props
-+ color(optional string): any css color string;
++ color(optional string): specified the color of scrollbar, value is any css color string;
