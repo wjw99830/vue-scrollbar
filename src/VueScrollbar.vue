@@ -36,8 +36,8 @@ export default createComponent({
   setup(props) {
     let scrolling = false;
     let scrollDirection: ScrollDirection = 'y'; // x or y
-    const inner: Ref<HTMLDivElement> = ref();
-    const wrapper: Ref<HTMLDivElement> = ref();
+    const inner: Ref<HTMLDivElement | undefined> = ref();
+    const wrapper: Ref<HTMLDivElement | undefined> = ref();
     const scrollThumbY = ref(0); // percentage of horizontal scrollbar
     const scrollThumbX = ref(0); // percentage of vertical scrollbar
     const scrollTop = ref(0); // mock property based on raw, it's a percentage used in translate
