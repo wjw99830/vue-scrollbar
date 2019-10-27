@@ -1,6 +1,6 @@
 {
   "name": "@wpkg/vue-scrollbar",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "scrollbar for vue.",
   "main": "src/install.ts",
   "module": "dist/VueScrollbar.esm.js",
