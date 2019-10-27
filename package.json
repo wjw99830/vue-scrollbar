@@ -2,7 +2,7 @@
   "name": "@wpkg/vue-scrollbar",
   "version": "0.0.4",
   "description": "scrollbar for vue.",
-  "main": "src/install.ts",
+  "main": "dist/VueScrollbar.esm.js",
   "module": "dist/VueScrollbar.esm.js",
   "scripts": {
     "build": "rollup -c rollup.config.js",
