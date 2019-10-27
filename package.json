@@ -4,6 +4,7 @@
   "description": "scrollbar for vue.",
   "main": "dist/VueScrollbar.esm.js",
   "module": "dist/VueScrollbar.esm.js",
+  "types": "types/install.d.ts",
   "scripts": {
     "build": "rollup -c rollup.config.js",
     "lint": "eslint --fix",
