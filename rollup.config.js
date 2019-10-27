@@ -4,18 +4,18 @@ import vue from 'rollup-plugin-vue';
 import pkg from './package.json';
 
 export default {
-  input: pkg.main,
+  input: 'src/install.ts',
   plugins: [
     commonjs(),
     ts({
       objectHashIgnoreUnknownHack: true,
       clean: true,
-      useTsconfigDeclarationDir: true,
+      useTsconfigDeclarationDir: true
     }),
-    vue(),
+    vue()
   ],
   output: [{
     file: pkg.module,
-    format: 'es',
-  }],
+    format: 'es'
+  }]
 };
