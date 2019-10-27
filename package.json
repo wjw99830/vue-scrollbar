@@ -8,7 +8,7 @@
     "build": "rollup -c rollup.config.js",
     "lint": "eslint --fix",
     "test": "jest",
-    "publish": "npm publish --access=public --registry=https://registry.npmjs.org"
+    "patch": "npm publish --access=public --registry=https://registry.npmjs.org"
   },
   "repository": "https://github.com/wjw99830/vue-scrollbar.git",
   "author": "wjw",
