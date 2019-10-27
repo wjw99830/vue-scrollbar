@@ -4,7 +4,7 @@
   "description": "scrollbar for vue.",
   "main": "dist/VueScrollbar.esm.js",
   "module": "dist/VueScrollbar.esm.js",
-  "types": "types/install.d.ts",
+  "typings": "types/install.d.ts",
   "scripts": {
     "build": "rollup -c rollup.config.js",
     "lint": "eslint --fix",
@@ -27,7 +27,7 @@
     "rollup-plugin-typescript2": "^0.22.0",
     "rollup-plugin-vue": "^5.0.1",
     "ts-jest": "^24.0.2",
-    "typescript": "^3.5.3",
+    "typescript": "^3.6.4",
     "vue-template-compiler": "^2.6.10"
   },
   "peerDependencies": {
