@@ -1,8 +1,7 @@
 {
   "compilerOptions": {
     "alwaysStrict": true,
-    "declaration": true,
-    "declarationDir": "types",
+    "declaration": false,
     "importHelpers": true,
     "target": "esnext",
     "module": "esnext",
