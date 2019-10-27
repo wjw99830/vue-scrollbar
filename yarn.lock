@@ -461,6 +461,13 @@
     sass "^1.18.0"
     stylus "^0.54.5"
 
+"@vue/composition-api@^0.3.2":
+  version "0.3.2"
+  resolved "https://registry.npm.taobao.org/@vue/composition-api/download/@vue/composition-api-0.3.2.tgz#2d797028e489bf7812f08c7bb33ffd03ef23c617"
+  integrity sha1-LXlwKOSJv3gS8Ix7sz/9A+8jxhc=
+  dependencies:
+    tslib "^1.9.3"
+
 abab@^2.0.0:
   version "2.0.0"
   resolved "https://registry.npm.taobao.org/abab/download/abab-2.0.0.tgz#aba0ab4c5eee2d4c79d3487d85450fb2376ebb0f"
@@ -4818,13 +4825,6 @@ void-elements@^2.0.1:
   version "2.0.1"
   resolved "https://registry.npm.taobao.org/void-elements/download/void-elements-2.0.1.tgz#c066afb582bb1cb4128d60ea92392e94d5e9dbec"
   integrity sha1-wGavtYK7HLQSjWDqkjkulNXp2+w=
-
-vue-function-api@^2.0.6:
-  version "2.0.6"
-  resolved "https://registry.npm.taobao.org/vue-function-api/download/vue-function-api-2.0.6.tgz#d3fc7a02ce9599d0af3869fbc76a43d88aeace24"
-  integrity sha1-0/x6As6VmdCvOGn7x2pD2IrqziQ=
-  dependencies:
-    tslib "^1.9.3"
 
 vue-runtime-helpers@1.0.1:
   version "1.0.1"

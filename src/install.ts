@@ -1,5 +1,5 @@
 import { VueConstructor } from 'vue';
-import { plugin as FunctionBasedPlugin } from 'vue-function-api';
+import FunctionBasedPlugin from '@vue/composition-api';
 import VueScrollbar from './VueScrollbar.vue';
 
 const plugin = {

@@ -27,37 +27,37 @@
     </div>
   </div>
 </template>
-<script lang='ts'>
-import { value, computed, onMounted, onDestroyed } from 'vue-function-api';
-export default {
+<script lang="ts">
+import { ref, computed, onMounted, onUnmounted, Ref, createComponent } from '@vue/composition-api';
+export default createComponent({
   props: {
     color: String,
   },
-  setup(props, ctx) {
+  setup(props) {
     let scrolling = false;
     let scrollDirection: ScrollDirection = 'y'; // x or y
-    const scrollThumbY = value(0); // percentage of horizontal scrollbar
-    const scrollThumbX = value(0); // percentage of vertical scrollbar
-    const scrollTop = value(0); // mock property based on raw, it's a percentage used in translate
-    const scrollLeft = value(0); // mock property based on raw, it's a percentage used in translate
+    const inner: Ref<HTMLDivElement> = ref();
+    const wrapper: Ref<HTMLDivElement> = ref();
+    const scrollThumbY = ref(0); // percentage of horizontal scrollbar
+    const scrollThumbX = ref(0); // percentage of vertical scrollbar
+    const scrollTop = ref(0); // mock property based on raw, it's a percentage used in translate
+    const scrollLeft = ref(0); // mock property based on raw, it's a percentage used in translate
     let scrollStartPosition = { x: 0, y: 0, top: 0, left: 0 }; // state before scroll
     const maxScrollTop = computed(() => {
-      const wrapper = ctx.refs.wrapper as HTMLElement | void;
-      if (!wrapper) {
+      if (!wrapper.value) {
         return 0;
       }
-      const content = wrapper.children[0];
+      const content = wrapper.value.children[0];
       if (!content) {
         return 0;
       }
       return (1 - content.clientHeight / content.scrollHeight) * 100 / scrollThumbY.value * 100;
     });
     const maxScrollLeft = computed(() => {
-      const wrapper = ctx.refs.wrapper as HTMLElement | void;
-      if (!wrapper) {
+      if (!wrapper.value) {
         return 0;
       }
-      const content = wrapper.children[0];
+      const content = wrapper.value.children[0];
       if (!content) {
         return 0;
       }
@@ -74,13 +74,12 @@ export default {
       };
     };
     const onScroll = () => {
-      const inner = ctx.refs.inner as HTMLElement | void;
-      if (!scrolling && inner) {
+      if (!scrolling && inner.value) {
         if (scrollThumbY.value < 100) {
-          scrollTop.value = inner.scrollTop / inner.scrollHeight * 100 / scrollThumbY.value * 100;
+          scrollTop.value = inner.value.scrollTop / inner.value.scrollHeight * 100 / scrollThumbY.value * 100;
         }
         if (scrollThumbX.value < 100) {
-          scrollLeft.value = inner.scrollLeft / inner.scrollWidth * 100 / scrollThumbX.value * 100;
+          scrollLeft.value = inner.value.scrollLeft / inner.value.scrollWidth * 100 / scrollThumbX.value * 100;
         }
       }
     };
@@ -89,29 +88,27 @@ export default {
       const direction = scrollDirection;
       if (scrolling) {
         const { x, y } = e;
-        const inner = ctx.refs.inner as HTMLElement | void;
         if (inner) {
           if (direction === 'y') {
             const dy = y - scrollStartPosition.y;
-            const innerH = inner.clientHeight;
+            const innerH = inner.value.clientHeight;
             const top = scrollStartPosition.top + dy / innerH * 100 / scrollThumbY.value * 100; // calc diff based on percentage of thumb
             scrollTop.value = Math.min(maxScrollTop.value, Math.max(0, top));
-            inner.scrollTop = scrollTop.value / 100 * innerH * scrollThumbY.value * 0.01 / innerH * inner.scrollHeight;
+            inner.value.scrollTop = scrollTop.value / 100 * innerH * scrollThumbY.value * 0.01 / innerH * inner.value.scrollHeight;
           } else {
             const dx = x - scrollStartPosition.x;
-            const innerW = inner.clientWidth;
+            const innerW = inner.value.clientWidth;
             const left = scrollStartPosition.left + dx / innerW * 100 / scrollThumbX.value * 100;
             scrollLeft.value = Math.min(maxScrollLeft.value, Math.max(0, left));
-            inner.scrollLeft = scrollLeft.value / 100 * innerW * scrollThumbX.value * 0.01 / innerW * inner.scrollWidth;
+            inner.value.scrollLeft = scrollLeft.value / 100 * innerW * scrollThumbX.value * 0.01 / innerW * inner.value.scrollWidth;
           }
         }
       }
     };
     const onMousemove = () => {
-      const inner = ctx.refs.inner as HTMLElement | void;
       if (inner) {
-        const currentScrollThumbY = inner.clientHeight / inner.scrollHeight * 100;
-        const currentScrollThumbX = inner.clientWidth / inner.scrollWidth * 100;
+        const currentScrollThumbY = inner.value.clientHeight / inner.value.scrollHeight * 100;
+        const currentScrollThumbX = inner.value.clientWidth / inner.value.scrollWidth * 100;
         if (scrollThumbY.value !== currentScrollThumbY || scrollThumbX.value !== currentScrollThumbX) {
           scrollThumbY.value = currentScrollThumbY;
           scrollThumbX.value = currentScrollThumbX;
@@ -122,7 +119,7 @@ export default {
       document.addEventListener('mouseup', onMouseScrollEnd);
       document.addEventListener('mousemove', onMouseScroll);
     });
-    onDestroyed(() => {
+    onUnmounted(() => {
       document.removeEventListener('mouseup', onMouseScrollEnd);
       document.removeEventListener('mousemove', onMouseScroll);
     });
@@ -136,7 +133,7 @@ export default {
       onMouseScrollStart,
     };
   },
-};
+});
 type ScrollDirection = 'x' | 'y';
 </script>
 <style>

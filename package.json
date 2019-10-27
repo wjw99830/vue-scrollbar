@@ -30,9 +30,8 @@
     "vue-template-compiler": "^2.6.10"
   },
   "peerDependencies": {
+    "@vue/composition-api": "^0.3.2",
     "vue": "^2.6.10"
   },
-  "dependencies": {
-    "vue-function-api": "^2.0.6"
-  }
+  "dependencies": {}
 }

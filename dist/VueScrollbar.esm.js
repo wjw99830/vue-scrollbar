@@ -1,37 +1,34 @@
-import { value, computed, onMounted, onDestroyed, plugin as plugin$1 } from 'vue-function-api';
+import FunctionBasedPlugin, { createComponent, ref, computed, onMounted, onUnmounted } from '@vue/composition-api';
 
-let _Vue;
-const setVue = (Vue) => _Vue = Vue;
-
-var script = _Vue.extend({
+var script = createComponent({
     props: {
         color: String,
     },
-    setup(props, ctx) {
+    setup(props) {
         let scrolling = false;
         let scrollDirection = 'y'; // x or y
-        const scrollThumbY = value(0); // percentage of horizontal scrollbar
-        const scrollThumbX = value(0); // percentage of vertical scrollbar
-        const scrollTop = value(0); // mock property based on raw, it's a percentage used in translate
-        const scrollLeft = value(0); // mock property based on raw, it's a percentage used in translate
+        const inner = ref();
+        const wrapper = ref();
+        const scrollThumbY = ref(0); // percentage of horizontal scrollbar
+        const scrollThumbX = ref(0); // percentage of vertical scrollbar
+        const scrollTop = ref(0); // mock property based on raw, it's a percentage used in translate
+        const scrollLeft = ref(0); // mock property based on raw, it's a percentage used in translate
         let scrollStartPosition = { x: 0, y: 0, top: 0, left: 0 }; // state before scroll
         const maxScrollTop = computed(() => {
-            const wrapper = ctx.refs.wrapper;
-            if (!wrapper) {
+            if (!wrapper.value) {
                 return 0;
             }
-            const content = wrapper.children[0];
+            const content = wrapper.value.children[0];
             if (!content) {
                 return 0;
             }
             return (1 - content.clientHeight / content.scrollHeight) * 100 / scrollThumbY.value * 100;
         });
         const maxScrollLeft = computed(() => {
-            const wrapper = ctx.refs.wrapper;
-            if (!wrapper) {
+            if (!wrapper.value) {
                 return 0;
             }
-            const content = wrapper.children[0];
+            const content = wrapper.value.children[0];
             if (!content) {
                 return 0;
             }
@@ -48,13 +45,12 @@ var script = _Vue.extend({
             };
         };
         const onScroll = () => {
-            const inner = ctx.refs.inner;
-            if (!scrolling && inner) {
+            if (!scrolling && inner.value) {
                 if (scrollThumbY.value < 100) {
-                    scrollTop.value = inner.scrollTop / inner.scrollHeight * 100 / scrollThumbY.value * 100;
+                    scrollTop.value = inner.value.scrollTop / inner.value.scrollHeight * 100 / scrollThumbY.value * 100;
                 }
                 if (scrollThumbX.value < 100) {
-                    scrollLeft.value = inner.scrollLeft / inner.scrollWidth * 100 / scrollThumbX.value * 100;
+                    scrollLeft.value = inner.value.scrollLeft / inner.value.scrollWidth * 100 / scrollThumbX.value * 100;
                 }
             }
         };
@@ -63,30 +59,28 @@ var script = _Vue.extend({
             const direction = scrollDirection;
             if (scrolling) {
                 const { x, y } = e;
-                const inner = ctx.refs.inner;
                 if (inner) {
                     if (direction === 'y') {
                         const dy = y - scrollStartPosition.y;
-                        const innerH = inner.clientHeight;
+                        const innerH = inner.value.clientHeight;
                         const top = scrollStartPosition.top + dy / innerH * 100 / scrollThumbY.value * 100; // calc diff based on percentage of thumb
                         scrollTop.value = Math.min(maxScrollTop.value, Math.max(0, top));
-                        inner.scrollTop = scrollTop.value / 100 * innerH * scrollThumbY.value * 0.01 / innerH * inner.scrollHeight;
+                        inner.value.scrollTop = scrollTop.value / 100 * innerH * scrollThumbY.value * 0.01 / innerH * inner.value.scrollHeight;
                     }
                     else {
                         const dx = x - scrollStartPosition.x;
-                        const innerW = inner.clientWidth;
+                        const innerW = inner.value.clientWidth;
                         const left = scrollStartPosition.left + dx / innerW * 100 / scrollThumbX.value * 100;
                         scrollLeft.value = Math.min(maxScrollLeft.value, Math.max(0, left));
-                        inner.scrollLeft = scrollLeft.value / 100 * innerW * scrollThumbX.value * 0.01 / innerW * inner.scrollWidth;
+                        inner.value.scrollLeft = scrollLeft.value / 100 * innerW * scrollThumbX.value * 0.01 / innerW * inner.value.scrollWidth;
                     }
                 }
             }
         };
         const onMousemove = () => {
-            const inner = ctx.refs.inner;
             if (inner) {
-                const currentScrollThumbY = inner.clientHeight / inner.scrollHeight * 100;
-                const currentScrollThumbX = inner.clientWidth / inner.scrollWidth * 100;
+                const currentScrollThumbY = inner.value.clientHeight / inner.value.scrollHeight * 100;
+                const currentScrollThumbX = inner.value.clientWidth / inner.value.scrollWidth * 100;
                 if (scrollThumbY.value !== currentScrollThumbY || scrollThumbX.value !== currentScrollThumbX) {
                     scrollThumbY.value = currentScrollThumbY;
                     scrollThumbX.value = currentScrollThumbX;
@@ -97,7 +91,7 @@ var script = _Vue.extend({
             document.addEventListener('mouseup', onMouseScrollEnd);
             document.addEventListener('mousemove', onMouseScroll);
         });
-        onDestroyed(() => {
+        onUnmounted(() => {
             document.removeEventListener('mouseup', onMouseScrollEnd);
             document.removeEventListener('mousemove', onMouseScroll);
         });
@@ -346,7 +340,7 @@ __vue_render__._withStripped = true;
   /* style */
   const __vue_inject_styles__ = function (inject) {
     if (!inject) return
-    inject("data-v-68722c20_0", { source: "\n.vue-scrollbar {\r\n  position: relative;\r\n  overflow: hidden;\n}\n.vue-scrollbar:hover > .vue-scrollbar--pathway {\r\n  opacity: .3;\n}\n.vue-scrollbar--pathway {\r\n  position: absolute;\r\n  opacity: 0;\r\n  transition: opacity .2s;\r\n  cursor: pointer;\n}\n.vue-scrollbar--pathway--y {\r\n  height: 100%;\r\n  width: 7px;\r\n  right: 0;\r\n  top: 0;\n}\n.vue-scrollbar--pathway--x {\r\n  width: 100%;\r\n  height: 7px;\r\n  bottom: 0;\n}\n.vue-scrollbar--thumb {\r\n  width: 100%;\r\n  height: 100%;\r\n  border-radius: 30px;\n}\n.vue-scrollbar--inner {\r\n  overflow: scroll;\r\n  width: calc(100% + 17px);\r\n  height: calc(100% + 17px);\n}\n.vue-scrollbar--inner::-webkit-scrollbar {\r\n  width: 17px;\r\n  height: 17px;\r\n  background-color: transparent;\n}\r\n", map: {"version":3,"sources":["D:\\Workspace\\vue-scrollbar\\src\\VueScrollbar.vue"],"names":[],"mappings":";AA+IA;EACA,kBAAA;EACA,gBAAA;AACA;AACA;EACA,WAAA;AACA;AACA;EACA,kBAAA;EACA,UAAA;EACA,uBAAA;EACA,eAAA;AACA;AACA;EACA,YAAA;EACA,UAAA;EACA,QAAA;EACA,MAAA;AACA;AACA;EACA,WAAA;EACA,WAAA;EACA,SAAA;AACA;AACA;EACA,WAAA;EACA,YAAA;EACA,mBAAA;AACA;AACA;EACA,gBAAA;EACA,wBAAA;EACA,yBAAA;AACA;AACA;EACA,WAAA;EACA,YAAA;EACA,6BAAA;AACA","file":"VueScrollbar.vue","sourcesContent":["<template>\r\n  <div class=\"vue-scrollbar\" ref=\"wrapper\" @mousemove=\"onMousemove\">\r\n    <div\r\n      ref=\"inner\"\r\n      class=\"vue-scrollbar--inner\"\r\n      @scroll=\"onScroll\"\r\n    >\r\n      <slot></slot>\r\n    </div>\r\n    <div class=\"vue-scrollbar--pathway vue-scrollbar--pathway--y\">\r\n      <div\r\n        onselectstart=\"return false\"\r\n        class=\"vue-scrollbar--thumb\"\r\n        v-show=\"scrollThumbY < 100\"\r\n        :style=\"{ transform: `translateY(${scrollTop}%)`, height: scrollThumbY + '%', backgroundColor: color || 'black' }\"\r\n        @mousedown=\"onMouseScrollStart($event, 'y')\"\r\n      ></div>\r\n    </div>\r\n    <div class=\"vue-scrollbar--pathway vue-scrollbar--pathway--x\">\r\n      <div\r\n        onselectstart=\"return false\"\r\n        class=\"vue-scrollbar--thumb\"\r\n        v-show=\"scrollThumbX < 100\"\r\n        :style=\"{ transform: `translateX(${scrollLeft}%)`, width: scrollThumbX + '%', backgroundColor: color || 'black' }\"\r\n        @mousedown=\"onMouseScrollStart($event, 'x')\"\r\n      ></div>\r\n    </div>\r\n  </div>\r\n</template>\r\n<script lang='ts'>\r\nimport { _Vue as Vue } from './_vue';\r\nimport { value, computed, onMounted, onDestroyed } from 'vue-function-api';\r\nexport default Vue.extend({\r\n  props: {\r\n    color: String,\r\n  },\r\n  setup(props, ctx) {\r\n    let scrolling = false;\r\n    let scrollDirection: ScrollDirection = 'y'; // x or y\r\n    const scrollThumbY = value(0); // percentage of horizontal scrollbar\r\n    const scrollThumbX = value(0); // percentage of vertical scrollbar\r\n    const scrollTop = value(0); // mock property based on raw, it's a percentage used in translate\r\n    const scrollLeft = value(0); // mock property based on raw, it's a percentage used in translate\r\n    let scrollStartPosition = { x: 0, y: 0, top: 0, left: 0 }; // state before scroll\r\n    const maxScrollTop = computed(() => {\r\n      const wrapper = ctx.refs.wrapper as HTMLElement | void;\r\n      if (!wrapper) {\r\n        return 0;\r\n      }\r\n      const content = wrapper.children[0];\r\n      if (!content) {\r\n        return 0;\r\n      }\r\n      return (1 - content.clientHeight / content.scrollHeight) * 100 / scrollThumbY.value * 100;\r\n    });\r\n    const maxScrollLeft = computed(() => {\r\n      const wrapper = ctx.refs.wrapper as HTMLElement | void;\r\n      if (!wrapper) {\r\n        return 0;\r\n      }\r\n      const content = wrapper.children[0];\r\n      if (!content) {\r\n        return 0;\r\n      }\r\n      return (1 - content.clientWidth / content.scrollWidth) * 100 / scrollThumbX.value * 100;\r\n    });\r\n    const onMouseScrollStart = (e: MouseEvent, direction: ScrollDirection) => {\r\n      scrolling = true;\r\n      scrollDirection = direction;\r\n      scrollStartPosition = {\r\n        x: e.x,\r\n        y: e.y,\r\n        top: scrollTop.value,\r\n        left: scrollLeft.value,\r\n      };\r\n    };\r\n    const onScroll = () => {\r\n      const inner = ctx.refs.inner as HTMLElement | void;\r\n      if (!scrolling && inner) {\r\n        if (scrollThumbY.value < 100) {\r\n          scrollTop.value = inner.scrollTop / inner.scrollHeight * 100 / scrollThumbY.value * 100;\r\n        }\r\n        if (scrollThumbX.value < 100) {\r\n          scrollLeft.value = inner.scrollLeft / inner.scrollWidth * 100 / scrollThumbX.value * 100;\r\n        }\r\n      }\r\n    };\r\n    const onMouseScrollEnd = () => scrolling = false;\r\n    const onMouseScroll = (e: MouseEvent) => {\r\n      const direction = scrollDirection;\r\n      if (scrolling) {\r\n        const { x, y } = e;\r\n        const inner = ctx.refs.inner as HTMLElement | void;\r\n        if (inner) {\r\n          if (direction === 'y') {\r\n            const dy = y - scrollStartPosition.y;\r\n            const innerH = inner.clientHeight;\r\n            const top = scrollStartPosition.top + dy / innerH * 100 / scrollThumbY.value * 100; // calc diff based on percentage of thumb\r\n            scrollTop.value = Math.min(maxScrollTop.value, Math.max(0, top));\r\n            inner.scrollTop = scrollTop.value / 100 * innerH * scrollThumbY.value * 0.01 / innerH * inner.scrollHeight;\r\n          } else {\r\n            const dx = x - scrollStartPosition.x;\r\n            const innerW = inner.clientWidth;\r\n            const left = scrollStartPosition.left + dx / innerW * 100 / scrollThumbX.value * 100;\r\n            scrollLeft.value = Math.min(maxScrollLeft.value, Math.max(0, left));\r\n            inner.scrollLeft = scrollLeft.value / 100 * innerW * scrollThumbX.value * 0.01 / innerW * inner.scrollWidth;\r\n          }\r\n        }\r\n      }\r\n    };\r\n    const onMousemove = () => {\r\n      const inner = ctx.refs.inner as HTMLElement | void;\r\n      if (inner) {\r\n        const currentScrollThumbY = inner.clientHeight / inner.scrollHeight * 100;\r\n        const currentScrollThumbX = inner.clientWidth / inner.scrollWidth * 100;\r\n        if (scrollThumbY.value !== currentScrollThumbY || scrollThumbX.value !== currentScrollThumbX) {\r\n          scrollThumbY.value = currentScrollThumbY;\r\n          scrollThumbX.value = currentScrollThumbX;\r\n        }\r\n      }\r\n    };\r\n    onMounted(() => {\r\n      document.addEventListener('mouseup', onMouseScrollEnd);\r\n      document.addEventListener('mousemove', onMouseScroll);\r\n    });\r\n    onDestroyed(() => {\r\n      document.removeEventListener('mouseup', onMouseScrollEnd);\r\n      document.removeEventListener('mousemove', onMouseScroll);\r\n    });\r\n    return {\r\n      scrollThumbX,\r\n      scrollThumbY,\r\n      scrollTop,\r\n      scrollLeft,\r\n      onMousemove,\r\n      onScroll,\r\n      onMouseScrollStart,\r\n    };\r\n  },\r\n})\r\ntype ScrollDirection = 'x' | 'y';\r\n</script>\r\n<style>\r\n.vue-scrollbar {\r\n  position: relative;\r\n  overflow: hidden;\r\n}\r\n.vue-scrollbar:hover > .vue-scrollbar--pathway {\r\n  opacity: .3;\r\n}\r\n.vue-scrollbar--pathway {\r\n  position: absolute;\r\n  opacity: 0;\r\n  transition: opacity .2s;\r\n  cursor: pointer;\r\n}\r\n.vue-scrollbar--pathway--y {\r\n  height: 100%;\r\n  width: 7px;\r\n  right: 0;\r\n  top: 0;\r\n}\r\n.vue-scrollbar--pathway--x {\r\n  width: 100%;\r\n  height: 7px;\r\n  bottom: 0;\r\n}\r\n.vue-scrollbar--thumb {\r\n  width: 100%;\r\n  height: 100%;\r\n  border-radius: 30px;\r\n}\r\n.vue-scrollbar--inner {\r\n  overflow: scroll;\r\n  width: calc(100% + 17px);\r\n  height: calc(100% + 17px);\r\n}\r\n.vue-scrollbar--inner::-webkit-scrollbar {\r\n  width: 17px;\r\n  height: 17px;\r\n  background-color: transparent;\r\n}\r\n</style>\r\n"]}, media: undefined });
+    inject("data-v-4d7466f9_0", { source: "\n.vue-scrollbar {\n  position: relative;\n  overflow: hidden;\n}\n.vue-scrollbar:hover > .vue-scrollbar--pathway {\n  opacity: .3;\n}\n.vue-scrollbar--pathway {\n  position: absolute;\n  opacity: 0;\n  transition: opacity .2s;\n  cursor: pointer;\n}\n.vue-scrollbar--pathway--y {\n  height: 100%;\n  width: 7px;\n  right: 0;\n  top: 0;\n}\n.vue-scrollbar--pathway--x {\n  width: 100%;\n  height: 7px;\n  bottom: 0;\n}\n.vue-scrollbar--thumb {\n  width: 100%;\n  height: 100%;\n  border-radius: 30px;\n}\n.vue-scrollbar--inner {\n  overflow: scroll;\n  width: calc(100% + 17px);\n  height: calc(100% + 17px);\n}\n.vue-scrollbar--inner::-webkit-scrollbar {\n  width: 17px;\n  height: 17px;\n  background-color: transparent;\n}\n", map: {"version":3,"sources":["/Users/wangjiwei/vue-scrollbar/src/VueScrollbar.vue"],"names":[],"mappings":";AA2IA;EACA,kBAAA;EACA,gBAAA;AACA;AACA;EACA,WAAA;AACA;AACA;EACA,kBAAA;EACA,UAAA;EACA,uBAAA;EACA,eAAA;AACA;AACA;EACA,YAAA;EACA,UAAA;EACA,QAAA;EACA,MAAA;AACA;AACA;EACA,WAAA;EACA,WAAA;EACA,SAAA;AACA;AACA;EACA,WAAA;EACA,YAAA;EACA,mBAAA;AACA;AACA;EACA,gBAAA;EACA,wBAAA;EACA,yBAAA;AACA;AACA;EACA,WAAA;EACA,YAAA;EACA,6BAAA;AACA","file":"VueScrollbar.vue","sourcesContent":["<template>\n  <div class=\"vue-scrollbar\" ref=\"wrapper\" @mousemove=\"onMousemove\">\n    <div\n      ref=\"inner\"\n      class=\"vue-scrollbar--inner\"\n      @scroll=\"onScroll\"\n    >\n      <slot></slot>\n    </div>\n    <div class=\"vue-scrollbar--pathway vue-scrollbar--pathway--y\">\n      <div\n        onselectstart=\"return false\"\n        class=\"vue-scrollbar--thumb\"\n        v-show=\"scrollThumbY < 100\"\n        :style=\"{ transform: `translateY(${scrollTop}%)`, height: scrollThumbY + '%', backgroundColor: color || 'black' }\"\n        @mousedown=\"onMouseScrollStart($event, 'y')\"\n      ></div>\n    </div>\n    <div class=\"vue-scrollbar--pathway vue-scrollbar--pathway--x\">\n      <div\n        onselectstart=\"return false\"\n        class=\"vue-scrollbar--thumb\"\n        v-show=\"scrollThumbX < 100\"\n        :style=\"{ transform: `translateX(${scrollLeft}%)`, width: scrollThumbX + '%', backgroundColor: color || 'black' }\"\n        @mousedown=\"onMouseScrollStart($event, 'x')\"\n      ></div>\n    </div>\n  </div>\n</template>\n<script lang=\"ts\">\nimport { ref, computed, onMounted, onUnmounted, Ref, createComponent } from '@vue/composition-api';\nexport default createComponent({\n  props: {\n    color: String,\n  },\n  setup(props) {\n    let scrolling = false;\n    let scrollDirection: ScrollDirection = 'y'; // x or y\n    const inner: Ref<HTMLDivElement> = ref();\n    const wrapper: Ref<HTMLDivElement> = ref();\n    const scrollThumbY = ref(0); // percentage of horizontal scrollbar\n    const scrollThumbX = ref(0); // percentage of vertical scrollbar\n    const scrollTop = ref(0); // mock property based on raw, it's a percentage used in translate\n    const scrollLeft = ref(0); // mock property based on raw, it's a percentage used in translate\n    let scrollStartPosition = { x: 0, y: 0, top: 0, left: 0 }; // state before scroll\n    const maxScrollTop = computed(() => {\n      if (!wrapper.value) {\n        return 0;\n      }\n      const content = wrapper.value.children[0];\n      if (!content) {\n        return 0;\n      }\n      return (1 - content.clientHeight / content.scrollHeight) * 100 / scrollThumbY.value * 100;\n    });\n    const maxScrollLeft = computed(() => {\n      if (!wrapper.value) {\n        return 0;\n      }\n      const content = wrapper.value.children[0];\n      if (!content) {\n        return 0;\n      }\n      return (1 - content.clientWidth / content.scrollWidth) * 100 / scrollThumbX.value * 100;\n    });\n    const onMouseScrollStart = (e: MouseEvent, direction: ScrollDirection) => {\n      scrolling = true;\n      scrollDirection = direction;\n      scrollStartPosition = {\n        x: e.x,\n        y: e.y,\n        top: scrollTop.value,\n        left: scrollLeft.value,\n      };\n    };\n    const onScroll = () => {\n      if (!scrolling && inner.value) {\n        if (scrollThumbY.value < 100) {\n          scrollTop.value = inner.value.scrollTop / inner.value.scrollHeight * 100 / scrollThumbY.value * 100;\n        }\n        if (scrollThumbX.value < 100) {\n          scrollLeft.value = inner.value.scrollLeft / inner.value.scrollWidth * 100 / scrollThumbX.value * 100;\n        }\n      }\n    };\n    const onMouseScrollEnd = () => scrolling = false;\n    const onMouseScroll = (e: MouseEvent) => {\n      const direction = scrollDirection;\n      if (scrolling) {\n        const { x, y } = e;\n        if (inner) {\n          if (direction === 'y') {\n            const dy = y - scrollStartPosition.y;\n            const innerH = inner.value.clientHeight;\n            const top = scrollStartPosition.top + dy / innerH * 100 / scrollThumbY.value * 100; // calc diff based on percentage of thumb\n            scrollTop.value = Math.min(maxScrollTop.value, Math.max(0, top));\n            inner.value.scrollTop = scrollTop.value / 100 * innerH * scrollThumbY.value * 0.01 / innerH * inner.value.scrollHeight;\n          } else {\n            const dx = x - scrollStartPosition.x;\n            const innerW = inner.value.clientWidth;\n            const left = scrollStartPosition.left + dx / innerW * 100 / scrollThumbX.value * 100;\n            scrollLeft.value = Math.min(maxScrollLeft.value, Math.max(0, left));\n            inner.value.scrollLeft = scrollLeft.value / 100 * innerW * scrollThumbX.value * 0.01 / innerW * inner.value.scrollWidth;\n          }\n        }\n      }\n    };\n    const onMousemove = () => {\n      if (inner) {\n        const currentScrollThumbY = inner.value.clientHeight / inner.value.scrollHeight * 100;\n        const currentScrollThumbX = inner.value.clientWidth / inner.value.scrollWidth * 100;\n        if (scrollThumbY.value !== currentScrollThumbY || scrollThumbX.value !== currentScrollThumbX) {\n          scrollThumbY.value = currentScrollThumbY;\n          scrollThumbX.value = currentScrollThumbX;\n        }\n      }\n    };\n    onMounted(() => {\n      document.addEventListener('mouseup', onMouseScrollEnd);\n      document.addEventListener('mousemove', onMouseScroll);\n    });\n    onUnmounted(() => {\n      document.removeEventListener('mouseup', onMouseScrollEnd);\n      document.removeEventListener('mousemove', onMouseScroll);\n    });\n    return {\n      scrollThumbX,\n      scrollThumbY,\n      scrollTop,\n      scrollLeft,\n      onMousemove,\n      onScroll,\n      onMouseScrollStart,\n    };\n  },\n});\ntype ScrollDirection = 'x' | 'y';\n</script>\n<style>\n.vue-scrollbar {\n  position: relative;\n  overflow: hidden;\n}\n.vue-scrollbar:hover > .vue-scrollbar--pathway {\n  opacity: .3;\n}\n.vue-scrollbar--pathway {\n  position: absolute;\n  opacity: 0;\n  transition: opacity .2s;\n  cursor: pointer;\n}\n.vue-scrollbar--pathway--y {\n  height: 100%;\n  width: 7px;\n  right: 0;\n  top: 0;\n}\n.vue-scrollbar--pathway--x {\n  width: 100%;\n  height: 7px;\n  bottom: 0;\n}\n.vue-scrollbar--thumb {\n  width: 100%;\n  height: 100%;\n  border-radius: 30px;\n}\n.vue-scrollbar--inner {\n  overflow: scroll;\n  width: calc(100% + 17px);\n  height: calc(100% + 17px);\n}\n.vue-scrollbar--inner::-webkit-scrollbar {\n  width: 17px;\n  height: 17px;\n  background-color: transparent;\n}\n</style>\n"]}, media: undefined });
 
   };
   /* scoped */
@@ -372,8 +366,7 @@ __vue_render__._withStripped = true;
 
 const plugin = {
     install(Vue) {
-        Vue.use(plugin$1);
-        setVue(Vue);
+        Vue.use(FunctionBasedPlugin);
         Vue.component('vue-scrollbar', VueScrollbar);
     },
 };
