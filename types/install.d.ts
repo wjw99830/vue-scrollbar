@@ -1,6 +1,5 @@
 import { VueConstructor } from 'vue';
-import VueScrollbar from './VueScrollbar.vue';
 declare const plugin: {
-    install(Vue: VueConstructor): void;
+    install(Vue: VueConstructor<import("vue").default>): void;
 };
 export default plugin;

@@ -88,7 +88,7 @@ export default createComponent({
       const direction = scrollDirection;
       if (scrolling) {
         const { x, y } = e;
-        if (inner) {
+        if (inner.value) {
           if (direction === 'y') {
             const dy = y - scrollStartPosition.y;
             const innerH = inner.value.clientHeight;
@@ -106,7 +106,7 @@ export default createComponent({
       }
     };
     const onMousemove = () => {
-      if (inner) {
+      if (inner.value) {
         const currentScrollThumbY = inner.value.clientHeight / inner.value.scrollHeight * 100;
         const currentScrollThumbX = inner.value.clientWidth / inner.value.scrollWidth * 100;
         if (scrollThumbY.value !== currentScrollThumbY || scrollThumbX.value !== currentScrollThumbX) {
