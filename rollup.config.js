@@ -14,9 +14,7 @@ export default {
       clean: true,
       useTsconfigDeclarationDir: true
     }),
-    vue({
-      css: false
-    })
+    vue({ css: false })
   ],
   output: [{
     file: pkg.module,

@@ -28,12 +28,12 @@
   </div>
 </template>
 <script lang="ts">
-import { ref, computed, onMounted, onUnmounted, Ref, createComponent } from '@vue/composition-api';
-export default createComponent({
+import { ref, computed, onMounted, onUnmounted, Ref } from '@vue/composition-api';
+export default {
   props: {
     color: String,
   },
-  setup(props) {
+  setup() {
     let scrolling = false;
     let scrollDirection: ScrollDirection = 'y'; // x or y
     const inner: Ref<HTMLDivElement | undefined> = ref();
@@ -124,6 +124,8 @@ export default createComponent({
       document.removeEventListener('mousemove', onMouseScroll);
     });
     return {
+      wrapper,
+      inner,
       scrollThumbX,
       scrollThumbY,
       scrollTop,
@@ -133,7 +135,7 @@ export default createComponent({
       onMouseScrollStart,
     };
   },
-});
+};
 type ScrollDirection = 'x' | 'y';
 </script>
 <style>

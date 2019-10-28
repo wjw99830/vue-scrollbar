@@ -1,27 +1,19 @@
-declare const _default: import("vue").ComponentOptions<import("vue").default, {
-    scrollThumbX: number;
-    scrollThumbY: number;
-    scrollTop: number;
-    scrollLeft: number;
-    onMousemove: () => void;
-    onScroll: () => void;
-    onMouseScrollStart: (e: MouseEvent, direction: ScrollDirection) => void;
-}, never, never, {
-    color: StringConstructor;
-}, import("@vue/composition-api/dist/component/componentProps").ExtractPropTypes<{
-    color: StringConstructor;
-}, false>> & (new () => import("@vue/composition-api").ComponentRenderProxy<import("@vue/composition-api/dist/component/componentProps").ExtractPropTypes<{
-    color: StringConstructor;
-}, true>, {
-    scrollThumbX: number;
-    scrollThumbY: number;
-    scrollTop: number;
-    scrollLeft: number;
-    onMousemove: () => void;
-    onScroll: () => void;
-    onMouseScrollStart: (e: MouseEvent, direction: ScrollDirection) => void;
-}, import("@vue/composition-api/dist/component/componentProps").ExtractPropTypes<{
-    color: StringConstructor;
-}, false>>);
+import { Ref } from '@vue/composition-api';
+declare const _default: {
+    props: {
+        color: StringConstructor;
+    };
+    setup(): {
+        wrapper: Ref<HTMLDivElement>;
+        inner: Ref<HTMLDivElement>;
+        scrollThumbX: Ref<number>;
+        scrollThumbY: Ref<number>;
+        scrollTop: Ref<number>;
+        scrollLeft: Ref<number>;
+        onMousemove: () => void;
+        onScroll: () => void;
+        onMouseScrollStart: (e: MouseEvent, direction: ScrollDirection) => void;
+    };
+};
 export default _default;
 declare type ScrollDirection = 'x' | 'y';

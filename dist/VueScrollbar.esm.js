@@ -1,10 +1,10 @@
-import FunctionBasedPlugin, { createComponent, ref, computed, onMounted, onUnmounted } from '@vue/composition-api';
+import FunctionBasedPlugin, { ref, computed, onMounted, onUnmounted } from '@vue/composition-api';
 
-var script = createComponent({
+var script = {
     props: {
         color: String,
     },
-    setup(props) {
+    setup() {
         let scrolling = false;
         let scrollDirection = 'y'; // x or y
         const inner = ref();
@@ -96,6 +96,8 @@ var script = createComponent({
             document.removeEventListener('mousemove', onMouseScroll);
         });
         return {
+            wrapper,
+            inner,
             scrollThumbX,
             scrollThumbY,
             scrollTop,
@@ -105,7 +107,7 @@ var script = createComponent({
             onMouseScrollStart,
         };
     },
-});
+};
 
 function normalizeComponent(template, style, script, scopeId, isFunctionalTemplate, moduleIdentifier
 /* server only */
